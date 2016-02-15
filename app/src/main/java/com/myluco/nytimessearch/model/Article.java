@@ -1,4 +1,4 @@
-package com.myluco.nytimessearch;
+package com.myluco.nytimessearch.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class Article implements Serializable{
     private String url;
+    public final static String DEFAULT_IMAGE_URL="http://i.imgur.com/GIfRrEd.png";
 
     public String getUrl() {
         return url;

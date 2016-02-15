@@ -20,7 +20,7 @@ News desk values (Arts, Fashion & Style, Sports)
 Sort order (oldest or newest)
 * [x] Subsequent searches will have any filters applied to the search results. (1 point)
 * [x] User can tap on any article in results to view the contents in an embedded browser. (2 points)
-* [x] User can scroll down "infinitely" to continue loading more news articles. The maximum number of articles is limited by the API search. (1 point)
+* [ ] User can scroll down "infinitely" to continue loading more news articles. The maximum number of articles is limited by the API search. (1 point)
 
 The following advanced user stories are optional but recommended:
 
@@ -36,6 +36,9 @@ The following advanced user stories are optional but recommended:
 * [] Bonus: Leverage the popular GSON library to streamline the parsing of JSON data. (1 point)
 * [] Bonus: Replace Picasso with Glide for more efficient image rendering. (1 point)
 
+## Additional User Stories
+* [x] If not thumbnail for the article is available, display the NYTimes Logo
+
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
@@ -45,8 +48,7 @@ Here's a walkthrough of implemented user stories:
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
-* The App crashed several times when changes were done. Usually deleting the app from emulator and reloading worked. Sometimes it did not. The problem is usually when reading the JSON information (I got some nulls in the caption for some reason and had to put some "defensive" code)
-* Had several issues with the App while debugging. The only way to get around (sometimes) was to delete the app and run again. It can be because of the OS that I use... Who knows. The problem happened only at debugging time (the program crashed if I did not go step by step)
+* 
 .
 
 ## License

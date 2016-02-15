@@ -1,16 +1,12 @@
 package com.myluco.nytimessearch.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.myluco.nytimessearch.Article;
+import com.myluco.nytimessearch.model.Article;
 import com.myluco.nytimessearch.R;
 
 public class ArticleActivity extends AppCompatActivity {
@@ -30,8 +26,9 @@ public class ArticleActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 //article will be embedded in activity
-                view.loadUrl(url);
-                return true;
+//                view.loadUrl(url);
+//                return true;
+                return false;
             }
         });
         wvArticle.loadUrl(article.getUrl());
