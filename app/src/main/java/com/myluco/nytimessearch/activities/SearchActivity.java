@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
+    private static final int PAGE_LIMIT = 5 ;
     EditText etQuery;
     Button btSearch;
     GridView gvResults;
@@ -48,6 +49,7 @@ public class SearchActivity extends AppCompatActivity {
     private String query;
     private RequestParams params;
     private AsyncHttpClient client;
+    private int count = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +102,15 @@ public class SearchActivity extends AppCompatActivity {
         // This method probably sends out a network request and appends new data items to your adapter.
         // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
         // Deserialize API response and then construct new objects to append to the adapter
+        count++;
+        if (count < PAGE_LIMIT) {
+            loadMorePages(offset);
+        }
+
+
+    }
+
+    private void loadMorePages(int offset) {
         params.put("page", offset);
 
         Log.v("DEBUG-PARAMS", params.toString());
@@ -122,6 +133,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -166,6 +178,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void doTheSearch(View view) {
+        //deal with this count so I do not have problems with the api key - (Limit the number of calls)
+        count = 0;
 
 //        Toast.makeText(this,query,Toast.LENGTH_LONG).show();
         //http://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=baf4f7c5b58a6076860b84fe12416362:11:74404265
@@ -187,6 +201,7 @@ public class SearchActivity extends AppCompatActivity {
 
         params.put("fq=news_desk", settings.getNewsDeskList(getResources()));
         Log.v("DEBUG-PARAMS", params.toString());
+        aaArticle.clear();
         client.get(NYTimes_URL,params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
