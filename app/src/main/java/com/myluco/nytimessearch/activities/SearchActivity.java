@@ -16,6 +16,7 @@ import android.widget.GridView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.myluco.nytimessearch.listener.EndlessScrollListener;
 import com.myluco.nytimessearch.model.Article;
 import com.myluco.nytimessearch.adapters.ArticleArrayAdapter;
 import com.myluco.nytimessearch.R;
@@ -40,6 +41,9 @@ public class SearchActivity extends AppCompatActivity {
     private static String NYTimes_URL = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
     private static int SETTINGS_ACTIVITY = 1;
 
+    private String query;
+    private RequestParams params;
+    private AsyncHttpClient client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +79,44 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
         );
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                customLoadMoreDataFromApi(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+                return true; // ONLY if more data is actually being loaded; false otherwise.
+            }
+        });
 
+    }
+    // Append more data into the adapter
+    private void customLoadMoreDataFromApi(int offset) {
+      // This method probably sends out a network request and appends new data items to your adapter.
+      // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+      // Deserialize API response and then construct new objects to append to the adapter
+        params.put("page", offset);
+
+        Log.v("DEBUG-PARAMS",params.toString());
+        client.get(NYTimes_URL,params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.v("DEBUG", response.toString());
+                JSONArray articlesJsonResult;
+
+                try {
+                    articlesJsonResult = response.getJSONObject("response").getJSONArray("docs");
+//                    Log.v("DEBUG", articlesJsonResult.toString());
+                    aaArticle.addAll(Article.fromJSONArray(articlesJsonResult));
+//                    aaArticle.notifyDataSetChanged();
+                    Log.v("DEBUG", articles.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,12 +147,12 @@ public class SearchActivity extends AppCompatActivity {
     }
     public void onArticleSearch(View view) {
         Log.v("Debug", settings.toString());
-        String query = etQuery.getText().toString();
+        query = etQuery.getText().toString();
 //        Toast.makeText(this,query,Toast.LENGTH_LONG).show();
         //http://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=baf4f7c5b58a6076860b84fe12416362:11:74404265
-        AsyncHttpClient client = new AsyncHttpClient();
+        client = new AsyncHttpClient();
 
-        RequestParams params = new RequestParams();
+        params = new RequestParams();
         params.put("api-key",API_KEY);
         params.put("page", 0);
         params.put("q", query);
