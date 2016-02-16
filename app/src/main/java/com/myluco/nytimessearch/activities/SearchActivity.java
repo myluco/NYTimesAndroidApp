@@ -1,6 +1,9 @@
 package com.myluco.nytimessearch.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -93,13 +97,13 @@ public class SearchActivity extends AppCompatActivity {
     }
     // Append more data into the adapter
     private void customLoadMoreDataFromApi(int offset) {
-      // This method probably sends out a network request and appends new data items to your adapter.
-      // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
-      // Deserialize API response and then construct new objects to append to the adapter
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
         params.put("page", offset);
 
-        Log.v("DEBUG-PARAMS",params.toString());
-        client.get(NYTimes_URL,params, new JsonHttpResponseHandler() {
+        Log.v("DEBUG-PARAMS", params.toString());
+        client.get(NYTimes_URL, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("DEBUG", response.toString());
@@ -139,15 +143,30 @@ public class SearchActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (activeNetworkInfo != null) {
+            Log.v("CONNECTION", activeNetworkInfo.toString());
+            if (activeNetworkInfo.isConnectedOrConnecting()) {
+                Log.v("CONNECTION-2", "Connected");
+            }
+        }
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
     private String formDate() {
 
-        String s = String.format("%04d%02d%02d",settings.getYear(),settings.getMonth(),settings.getDay());
+        String s = String.format("%04d%02d%02d", settings.getYear(), settings.getMonth(), settings.getDay());
         Log.v("DEBUG",s);
         return  s ;
     }
-    public void onArticleSearch(View view) {
-        Log.v("Debug", settings.toString());
-        query = etQuery.getText().toString();
+
+    private void doTheSearch(View view) {
+
 //        Toast.makeText(this,query,Toast.LENGTH_LONG).show();
         //http://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=baf4f7c5b58a6076860b84fe12416362:11:74404265
         client = new AsyncHttpClient();
@@ -167,7 +186,7 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         params.put("fq=news_desk", settings.getNewsDeskList(getResources()));
-        Log.v("DEBUG-PARAMS",params.toString());
+        Log.v("DEBUG-PARAMS", params.toString());
         client.get(NYTimes_URL,params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -183,11 +202,26 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
-        });
+
+             });
+
+    }
 
 
+    public void onArticleSearch(View view) {
+
+        if (!isNetworkAvailable().booleanValue()) {
+            Toast.makeText(this,"Cannot Search: Network not Available",Toast.LENGTH_LONG).show();
+        }else {
+            Log.v("Debug", settings.toString());
+            query = etQuery.getText().toString();
+            if (query.trim().length()  > 0) {
+                doTheSearch(view);
+            }else {
+               Toast.makeText(this,"Please enter a search query",Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public void onSettingsSelected(MenuItem item) {

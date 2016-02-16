@@ -24,7 +24,7 @@ Sort order (oldest or newest)
 
 The following advanced user stories are optional but recommended:
 
-* [] Advanced: Robust error handling, check if internet is available, handle error cases, network failures. (1 point)
+* [x] Advanced: Robust error handling, check if internet is available, handle error cases, network failures. (1 point)
 * [] Advanced: Use the ActionBar SearchView or custom layout as the query box instead of an EditText. (1 point)
 * [] Advanced: User can share a link to their friends or email it to themselves. (1 point)
 * [] Advanced: Replace Filter Settings Activity with a lightweight modal overlay. (2 points)
@@ -37,13 +37,19 @@ The following advanced user stories are optional but recommended:
 * [] Bonus: Replace Picasso with Glide for more efficient image rendering. (1 point)
 
 ## Additional User Stories
+
 * [x] If not thumbnail for the article is available, display the NYTimes Logo
+* [x] If query term is blank, tell user that query term needs to contain something
 
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
 <a href="http://i.imgur.com/BtAG7yQ.gifv" target="_blank">Video Walkthrough</a>
+
+Showing exceptions: Network not available and search query is blank
+
+<a href="http://i.imgur.com/7rgzu77.gifv" target="_blank">Video Walkthrough for Exceptions</a>
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
